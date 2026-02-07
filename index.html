@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Video Portal</title>
+    <style>
+        :root {
+            --accent: #00f2fe;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            background: #0f172a;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Video Card */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 20px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Progress Bar System */
+        .progress-container {
+            margin-top: 20px;
+            display: none; /* Hidden until download starts */
+        }
+
+        .bar-bg {
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Unique Download Button */
+        .dl-btn {
+            margin-top: 20px;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .dl-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        /* GUI Notification */
+        #notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            padding: 15px 30px;
+            border-radius: 12px;
+            transition: 0.5s ease;
+            z-index: 1000;
+        }
+
+        #notification.show { top: 20px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="notification">✅ Download Started Successfully!</div>
+
+    <div class="card">
+        <video id="myVideo" controls poster="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80">
+            <source src="Jerriel_Cry4zee_21.mp4" type="video/mp4">
+        </video>
+
+        <div id="statusText" style="margin-top:15px; font-size: 0.9rem; color: #94a3b8;">Ready for High-Speed Download</div>
+
+        <div class="progress-container" id="progBox">
+            <div class="bar-bg"><div class="bar-fill" id="bar"></div></div>
+            <span id="percent">0%</span>
+        </div>
+
+        <button class="dl-btn" id="dlBtn" onclick="startSecureDownload()">INITIALIZE DOWNLOAD</button>
+    </div>
+
+<script>
+    function startSecureDownload() {
+        const btn = document.getElementById('dlBtn');
+        const progBox = document.getElementById('progBox');
+        const bar = document.getElementById('bar');
+        const percent = document.getElementById('percent');
+        const note = document.getElementById('notification');
+        const status = document.getElementById('statusText');
+
+        // 1. Show GUI Notification
+        note.classList.add('show');
+        setTimeout(() => note.classList.remove('show'), 3000);
+
+        // 2. Switch UI to "Downloading" mode
+        btn.style.display = 'none';
+        progBox.style.display = 'block';
+        status.innerText = "Syncing with Browser Download System...";
+
+        // 3. Open the download in a new tab (The "Another Tab" requirement)
+        // Note: Change 'YOUR_VIDEO_URL_HERE.mp4' to your actual file link
+        const videoUrl = 'https://www.mediafire.com/file/jpflv1mas4b3xq9/Jerriel_Cry4zee_21.mp4/file';
+        window.open(videoUrl, '_blank');
+
+        // 4. Simulate the progress bar (since browsers don't expose real-time MBs for security)
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                status.innerText = "Download Complete!";
+                setTimeout(() => {
+                    btn.style.display = 'inline-block';
+                    btn.innerText = "DOWNLOAD AGAIN";
+                    progBox.style.display = 'none';
+                    width = 0;
+                }, 2000);
+            } else {
+                width += Math.random() * 10; // Randomly jumps to look "real"
+                if(width > 100) width = 100;
+                bar.style.width = width + '%';
+                percent.innerText = Math.floor(width) + '%';
+            }
+        }, 200);
+    }
+</script>
+</body>
+</html>
